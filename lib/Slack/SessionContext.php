@@ -8,11 +8,12 @@
 
 namespace Slack;
 
-class SessionContext extends BaseObject {
-
+class SessionContext extends BaseObject
+{
     private static $exists;
 
-    public static function create() : bool {
+    public static function create(): bool
+    {
         if (!self::$exists) {
             self::$exists = session_start();
         }

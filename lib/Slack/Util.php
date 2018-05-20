@@ -8,13 +8,16 @@
 
 namespace Slack;
 
-class Util extends BaseObject {
+class Util extends BaseObject
+{
 
-    public static function escape(string $string) : string {
+    public static function escape(string $string): string
+    {
         return nl2br(htmlspecialchars($string));
     }
 
-    public static function action(string $action, array $params = null) : string {
+    public static function action(string $action, array $params = null): string
+    {
         $url = null;
 
         $url = 'index.php?' . Controller::ACTION . '=' . rawurlencode($action);
@@ -34,7 +37,8 @@ class Util extends BaseObject {
         return $url;
     }
 
-    public static function redirect(string $page = null) {
+    public static function redirect(string $page = null)
+    {
         if ($page == null) {
             $page = isset($_REQUEST[Controller::PAGE]) ?
                 rawurldecode($_REQUEST[Controller::PAGE]) :

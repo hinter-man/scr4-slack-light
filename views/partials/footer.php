@@ -9,33 +9,27 @@
 use Slack\Util;
 
 if (isset($errors) && is_array($errors)): ?>
-  <div class="errors alert alert-danger">
-    <ul>
-		<?php foreach ($errors as $errMsg): ?>
-          <li><?php echo(Util::escape($errMsg)); ?></li>
-		<?php endforeach; ?>
-    </ul>
-  </div>
+    <div class="errors alert alert-danger">
+        <ul>
+            <?php foreach ($errors as $errMsg): ?>
+                <li><?php echo(Util::escape($errMsg)); ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
 <?php endif; ?>
 
 <!--/display error messages-->
 
 <div class="footer">
 
-  <!--display cart info-->
-  <hr />
-  <div class="col-sm-8">
-    <button class="btn btn-primary btn-xs" type="button">
-      <span class="badge"><?php echo Slack\Util::escape($cartSize); ?></span> item<?php print
-			$cartSize != 1 ? 's' : null;  ?> in cart
-    </button>
-  </div>
-  <div class="col-sm-4 pull-right">
-    <p><?php echo Slack\Util::escape(strftime('%c')); ?></p>
-  </div>
+    <!--display cart info-->
+    <hr/>
+    <div class="col-sm-4 pull-right">
+        <p><?php echo Slack\Util::escape(strftime('%c')); ?></p>
+    </div>
 
 
-  <!--/display cart info-->
+    <!--/display cart info-->
 
 </div>
 

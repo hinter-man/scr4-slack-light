@@ -8,6 +8,7 @@
 
 
 namespace Slack;
+
 use Data\DataManager;
 
 /**
@@ -18,13 +19,15 @@ use Data\DataManager;
  * - demo of singleton pattern
  */
 class Controller
-    extends BaseObject {
+    extends BaseObject
+{
     // static strings used in views
 
     const ACTION = 'action';
     const PAGE = 'page';
     const ACTION_LOGIN = 'login';
     const ACTION_LOGOUT = 'logout';
+    const ACTION_NEW_USER = 'new-user';
     const USER_NAME = 'userName';
     const USER_PASSWORD = 'password';
 
@@ -34,16 +37,18 @@ class Controller
      *
      * @return Controller
      */
-    public static function getInstance() : Controller {
+    public static function getInstance(): Controller
+    {
 
-        if ( ! self::$instance) {
+        if (!self::$instance) {
             self::$instance = new Controller();
         }
 
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
 
     }
 
@@ -55,13 +60,14 @@ class Controller
      * @return bool
      * @throws Exception
      */
-    public function invokePostAction(): bool {
+    public function invokePostAction(): bool
+    {
 
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
             throw new \Exception('Controller can only handle POST requests.');
 
             return null;
-        } elseif ( ! isset($_REQUEST[ self::ACTION ])) {
+        } elseif (!isset($_REQUEST[self::ACTION])) {
             throw new \Exception(self::ACTION . ' not specified.');
 
             return null;
@@ -69,7 +75,7 @@ class Controller
 
 
         // now process the assigned action
-        $action = $_REQUEST[ self::ACTION ];
+        $action = $_REQUEST[self::ACTION];
 
         switch ($action) {
             case self::ACTION_LOGIN :
@@ -84,18 +90,30 @@ class Controller
                 Util::redirect();
                 break;
 
+            case self::ACTION_NEW_USER:
+                $user = AuthenticationManager::createNewUser($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD]);
+                if ($user != null) {
+                    $_SESSION['success-user'] = true;
+                    Util::redirect("index.php?view=login");
+                } else {
+                    $_SESSION['success-user'] = false;
+                    Util::redirect("index.php?view=new-user");
+                }
+
+                break;
+
             default :
                 throw new \Exception('Unknown controller action: ' . $action);
                 break;
         }
     }
 
-    protected function forwardRequest(array $errors = null, $target = null) {
+    protected function forwardRequest(array $errors = null, $target = null)
+    {
         if ($target == null) {
             if (isset($_REQUEST[self::PAGE])) {
                 $target = $_REQUEST[self::PAGE];
-            }
-            else {
+            } else {
                 $target = $_SERVER['REQUEST_URI'];
             }
         }

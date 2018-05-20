@@ -8,19 +8,23 @@
 
 namespace Slack;
 
-interface IData {
+interface IData
+{
     public function getId();
 }
 
-class Entity extends BaseObject implements IData {
+class Entity extends BaseObject implements IData
+{
 
     private $id;
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function __construct($id) {
+    public function __construct($id)
+    {
         $this->id = $id;
     }
 }

@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hinterreiter
  * Date: 20.05.2018
- * Time: 08:43
+ * Time: 10:36
  */
 
 use Slack\AuthenticationManager;
@@ -13,23 +13,20 @@ if (AuthenticationManager::isAuthenticated()) {
     Util::redirect("index.php?view=channels");
 }
 
-
 $userName = isset($_REQUEST['userName']) ? $_REQUEST['userName'] : null;
 
-?>
-
-<?php require_once('views/partials/header.php'); ?>
+require_once('views/partials/header.php'); ?>
 
     <div class="page-header">
-        <h2>Login</h2>
+        <h2>New User</h2>
     </div>
-    <?php
-        $userCreated = $_SESSION['success-user'] ?? null;
-        if (isset($userCreated) && $userCreated) : ?>
-        <div class="alert alert-success">
-            <strong>User successfully created!</strong> Please login to continue.
+    <?php $userCreated = $_SESSION['success-user'] ?? null;
+        if (isset($userCreated) && !$userCreated) : ?>
+        <div class="alert alert-danger">
+            <strong>Username already exists!</strong> Please choose another one.
         </div>
     <?php unset($_SESSION['success-user']); endif ?>
+
     <div class="panel panel-default">
         <div class="panel-heading">
             Please fill out the form below:
@@ -37,7 +34,7 @@ $userName = isset($_REQUEST['userName']) ? $_REQUEST['userName'] : null;
         <div class="panel-body">
 
             <form class="form-horizontal" method="post"
-                  action="<?php echo Util::action(Slack\Controller::ACTION_LOGIN, array('view' => $view)); ?>">
+                  action="<?php echo Util::action(Slack\Controller::ACTION_NEW_USER, array('view' => $view)); ?>">
                 <div class="form-group">
                     <label for="inputName" class="col-sm-2 control-label">User name:</label>
                     <div class="col-sm-6">
@@ -55,7 +52,7 @@ $userName = isset($_REQUEST['userName']) ? $_REQUEST['userName'] : null;
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-6">
-                        <button type="submit" class="btn btn-default">Login</button>
+                        <button type="submit" class="btn btn-default">Create New User</button>
                     </div>
                 </div>
             </form>
@@ -65,3 +62,5 @@ $userName = isset($_REQUEST['userName']) ? $_REQUEST['userName'] : null;
 
 <?php
 require_once('views/partials/footer.php');
+
+

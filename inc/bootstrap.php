@@ -16,7 +16,7 @@ spl_autoload_register(
             str_replace('\\', DIRECTORY_SEPARATOR, $class) .
             '.php';
         if (file_exists($filepath)) {
-            include ($filepath);
+            include($filepath);
         }
     }
 );
@@ -24,4 +24,4 @@ spl_autoload_register(
 // create session
 Slack\SessionContext::create();
 
-//require_once(__DIR__ . '/../lib/Data/DataManager_mysqlpdo.php');
+require_once(__DIR__ . '/../lib/Data/DataManager_mysqlpdo.php');

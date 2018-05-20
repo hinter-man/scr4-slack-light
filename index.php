@@ -11,7 +11,6 @@ if ($postAction != null) {
 
 if (file_exists(__DIR__ . '/views/' . $view . '.php')) {
     require_once('views/' . $view . '.php');
-}
-else {
+} else {
     require_once('views/' . $default_view . '.php');
 }
