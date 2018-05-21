@@ -14,8 +14,12 @@ use Data\DataManager;
 use Slack\Controller;
 
 $channels = DataManager::getChannels();
-$title = null;
-$text = null;
+
+$channelId = $_REQUEST['channelId'] ?? null;
+if (isset($channelId) && $channelId > 0) {
+    $postings = DataManager::getPostingsByChannel($channelId);
+}
+
 ?>
 
 <?php if (AuthenticationManager::isAuthenticated()) : ?>
@@ -23,53 +27,25 @@ $text = null;
 
         <div class="row">
             <div class="col-sm-4">
-                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
                     <?php
                     foreach ($channels as $channel) : $id = $channel->getId(); ?>
-                        <a class="nav-link" id="<?php echo "channel-tab" . $id ?>" data-toggle="pill"
-                           href="#<?php echo "channel" . $id ?>" role="tab"
-                           aria-controls="<?php echo "channel" . $id ?>"
-                           aria-selected="false"><?php echo "#" . $channel->getName() . " - " . $channel->getDescription(); ?></a>
+                        <a class="nav-link" id="<?php echo "channel-tab" . $id ?>"
+                           href="<?php echo $_SERVER['PHP_SELF'] ?>?view=channels&channelId=<?php echo urlencode($id); ?>"
+                           role="tab">
+                            <?php echo "#" . $channel->getName() . " - " . $channel->getDescription(); ?>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             </div>
             <div class="col-sm-8">
-                <div class="tab-content" id="v-pills-tabContent">
-                    <?php
-                    $channels = DataManager::getChannels();
-                    foreach ($channels as $channel) :
-                        $id = $channel->getId();
-                        $postings = DataManager::getPostingsByChannel($id);
-                        ?>
-                        <div class="tab-pane fade" id="<?php echo "channel" . $id ?>" role="tabpanel"
-                             aria-labelledby="<?php echo "channel-tab" . $id ?>">
-                            <div class="list-group">
-                                <?php foreach ($postings as $posting) : ?>
-                                    <a href="#"
-                                       class="list-group-item list-group-item-action flex-column align-items-start">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h5 class="mb-1"><?php echo $posting->getTitle(); ?></h5>
-                                            <small><?php echo $posting->getDate(); ?></small>
-                                        </div>
-                                        <p class="mb-1"><?php echo $posting->getText(); ?></p>
-                                        <small><?php echo $posting->getAuthor(); ?></small>
-                                    </a>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-                <div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Title</span>
-                        </div>
-                        <input id="posting-title" type="text" class="form-control" placeholder="Title"
-                               name="<?php echo htmlentities($title); ?>" aria-label="Title"
-                               aria-describedby="basic-addon1">
+                <?php if (isset($postings) && sizeof($postings) > 0) :
+                    require("partials/postings.php");
+                else : ?>
+                    <div class="alert alert-warning" role="alert">
+                        Please select a channel!
                     </div>
-                    <button type="submit" id="create-posting-btn" class="btn btn-light">Post</button>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
