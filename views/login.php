@@ -23,13 +23,6 @@ $userName = isset($_REQUEST['userName']) ? $_REQUEST['userName'] : null;
     <div class="page-header">
         <h2>Login</h2>
     </div>
-    <?php
-        $userCreated = $_SESSION['success-user'] ?? null;
-        if (isset($userCreated) && $userCreated) : ?>
-        <div class="alert alert-success">
-            <strong>User successfully created!</strong> Please login to continue.
-        </div>
-    <?php unset($_SESSION['success-user']); endif ?>
     <div class="panel panel-default">
         <div class="panel-heading">
             Please fill out the form below:

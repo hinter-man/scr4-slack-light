@@ -8,6 +8,7 @@
 
 use Slack\Util;
 use Slack\AuthenticationManager;
+use Slack\Controller;
 
 $user = AuthenticationManager::getAuthenticatedUser(); ?>
 
@@ -87,6 +88,44 @@ $user = AuthenticationManager::getAuthenticatedUser(); ?>
             </ul> <!-- /. login -->
         </div><!--/.nav-collapse -->
     </div>
+</div>
+<!-- Success Messages -->
+<div class="container">
+    <?php
+    $type = $_SESSION[Controller::USER_LOGIN_FEEDBACK] ?? null;
+    switch ($type) {
+        case Controller::USER_LOGIN_SUCCESS:
+            ?>
+            <div class="alert alert-success">
+                <strong>User successfully created!</strong> Please login to continue.
+            </div>
+            <?php
+            break;
+    }
+    ?>
+
+    <!-- Error Messages -->
+
+    <?php switch ($type) {
+        case Controller::USER_ALREADY_EXISTS:
+            ?>
+            <div class="alert alert-danger">
+                <strong>User already exists!</strong> Please try again.
+            </div>
+            <?php
+            break;
+        case Controller::USER_INVALID_CREDENTIALS:
+            ?>
+            <div class="alert alert-danger">
+                <strong>Invalid credentials</strong> Please try again.
+            </div>
+            <?php
+            break;
+    }
+    ?>
+
+
+    <?php unset($_SESSION[Controller::USER_LOGIN_FEEDBACK]); ?>
 </div>
 
 <div class="container">

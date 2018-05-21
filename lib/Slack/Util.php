@@ -8,6 +8,8 @@
 
 namespace Slack;
 
+use Slack\Controller;
+
 class Util extends BaseObject
 {
 

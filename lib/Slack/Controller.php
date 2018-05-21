@@ -30,6 +30,10 @@ class Controller
     const ACTION_NEW_USER = 'new-user';
     const USER_NAME = 'userName';
     const USER_PASSWORD = 'password';
+    const USER_LOGIN_FEEDBACK = 'user-login-feedback';
+    const USER_INVALID_CREDENTIALS = 'invalid-credentials';
+    const USER_LOGIN_SUCCESS = 'login-success';
+    const USER_ALREADY_EXISTS = 'already-exists';
 
     private static $instance = false;
 
@@ -58,7 +62,7 @@ class Controller
      * action
      *
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function invokePostAction(): bool
     {
@@ -80,7 +84,8 @@ class Controller
         switch ($action) {
             case self::ACTION_LOGIN :
                 if (!AuthenticationManager::authenticate($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD])) {
-                    self::forwardRequest(['Invalid user credentials.']);
+                    $_SESSION[self::USER_LOGIN_FEEDBACK] = self::USER_INVALID_CREDENTIALS;
+                    Util::redirect();
                 }
                 Util::redirect();
                 break;
@@ -93,11 +98,11 @@ class Controller
             case self::ACTION_NEW_USER:
                 $user = AuthenticationManager::createNewUser($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD]);
                 if ($user != null) {
-                    $_SESSION['success-user'] = true;
+                    $_SESSION[self::USER_LOGIN_FEEDBACK] = self::USER_LOGIN_SUCCESS;
                     Util::redirect("index.php?view=login");
                 } else {
-                    $_SESSION['success-user'] = false;
-                    Util::redirect("index.php?view=new-user");
+                    $_SESSION[self::USER_LOGIN_FEEDBACK] = self::USER_ALREADY_EXISTS;
+                    Util::redirect();
                 }
 
                 break;
@@ -108,20 +113,5 @@ class Controller
         }
     }
 
-    protected function forwardRequest(array $errors = null, $target = null)
-    {
-        if ($target == null) {
-            if (isset($_REQUEST[self::PAGE])) {
-                $target = $_REQUEST[self::PAGE];
-            } else {
-                $target = $_SERVER['REQUEST_URI'];
-            }
-        }
-        if (count($errors) > 0) {
-            $target .= '&errors=' . urlencode(serialize($errors));
-            header('Location:' . $target);
-            exit();
-        }
-    }
 
 }
