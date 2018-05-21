@@ -34,6 +34,8 @@ class Controller
     const USER_INVALID_CREDENTIALS = 'invalid-credentials';
     const USER_LOGIN_SUCCESS = 'login-success';
     const USER_ALREADY_EXISTS = 'already-exists';
+    const POSTING_TITLE = 'title';
+    const POSTING_TEXT = 'text';
 
     private static $instance = false;
 

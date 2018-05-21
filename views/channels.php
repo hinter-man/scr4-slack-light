@@ -10,34 +10,66 @@
 require_once('views/partials/header.php');
 
 use Slack\AuthenticationManager;
+use Data\DataManager;
 
-$authenticated = false;
-if (AuthenticationManager::isAuthenticated()) {
-    $authenticated = true;
-}
-
+$channels = DataManager::getChannels();
+$title = null;
+$text = null;
 ?>
 
-<?php if ($authenticated) : ?>
+<?php if (AuthenticationManager::isAuthenticated()) : ?>
+    <div class="container-fluid channels">
 
-    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
-           aria-controls="v-pills-home" aria-selected="true">Home</a>
-        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
-           aria-controls="v-pills-profile" aria-selected="false">Profile</a>
-        <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab"
-           aria-controls="v-pills-messages" aria-selected="false">Messages</a>
-        <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab"
-           aria-controls="v-pills-settings" aria-selected="false">Settings</a>
-    </div>
-    <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-            ...
-        </div>
-        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
-        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...
-        </div>
-        <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <?php
+                    foreach ($channels as $channel) : $id = $channel->getId(); ?>
+                        <a class="nav-link" id="<?php echo "channel-tab" . $id ?>" data-toggle="pill"
+                           href="#<?php echo "channel" . $id ?>" role="tab"
+                           aria-controls="<?php echo "channel" . $id ?>"
+                           aria-selected="false"><?php echo "#" . $channel->getName() . " - " . $channel->getDescription(); ?></a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <?php
+                    $channels = DataManager::getChannels();
+                    foreach ($channels as $channel) :
+                        $id = $channel->getId();
+                        $postings = DataManager::getPostingsByChannel($id);
+                        ?>
+                        <div class="tab-pane fade" id="<?php echo "channel" . $id ?>" role="tabpanel"
+                             aria-labelledby="<?php echo "channel-tab" . $id ?>">
+                            <div class="list-group">
+                                <?php foreach ($postings as $posting) : ?>
+                                    <a href="#"
+                                       class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1"><?php echo $posting->getTitle(); ?></h5>
+                                            <small><?php echo $posting->getDate(); ?></small>
+                                        </div>
+                                        <p class="mb-1"><?php echo $posting->getText(); ?></p>
+                                        <small><?php echo $posting->getAuthor(); ?></small>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <!-- TODO: Create new posting
+                <form method="post" action="slack-light">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Title</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Title" name="<?php// echo htmlentities($title); ?>" aria-label="Title" aria-describedby="basic-addon1">
+                    </div>
+                    <button type="submit" class="btn btn-light">Post</button>
+                </form>
+                -->
+            </div>
         </div>
     </div>
 <?php else: ?>

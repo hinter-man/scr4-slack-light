@@ -8,6 +8,8 @@
 
 namespace Data;
 
+use Slack\Channel;
+use Slack\Posting;
 use Slack\User;
 
 include 'IDataManager.php';
@@ -152,22 +154,57 @@ class DataManager implements IDataManager
         $con->beginTransaction();
         try {
             self::query($con,
-            "INSERT INTO user (Username, Password) 
+                "INSERT INTO user (Username, Password) 
                       VALUES (?, ?)",
-                        array($userName,
-                        $password));
+                array($userName,
+                    $password));
 
             $userId = self::lastInsertId($con);
             $con->commit();
 
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $con->rollBack();
             $userId = -1;
         }
 
         self::closeConnection($con);
         return $userId;
+    }
+
+    public static function getChannels(): array
+    {
+        $channels = array();
+
+        $con = self::getConnection();
+        $res = self::query($con, "
+			SELECT * FROM channel");
+
+        while ($channel = self::fetchObject($res)) {
+            $channels[] = new Channel($channel->Id, $channel->Name, $channel->Description);
+        }
+
+        self::close($res);
+        self::closeConnection($con);
+
+        return $channels;
+    }
+
+    public static function getPostingsByChannel(int $channelId): array
+    {
+        $postings = array();
+
+        $con = self::getConnection();
+        $res = self::query($con, "
+			SELECT * FROM posting WHERE ChannelId = ?", array($channelId));
+
+        while ($posting = self::fetchObject($res)) {
+            $postings[] = new Posting($posting->Id, $posting->ChannelId, $posting->Title, $posting->Text, $posting->Author, $posting->Date);
+        }
+
+        self::close($res);
+        self::closeConnection($con);
+
+        return $postings;
     }
 }
 
