@@ -11,6 +11,7 @@ require_once('views/partials/header.php');
 
 use Slack\AuthenticationManager;
 use Data\DataManager;
+use Slack\Controller;
 
 $channels = DataManager::getChannels();
 $title = null;
@@ -58,17 +59,17 @@ $text = null;
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <!-- TODO: Create new posting
-                <form method="post" action="slack-light">
+                <div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Title</span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Title" name="<?php// echo htmlentities($title); ?>" aria-label="Title" aria-describedby="basic-addon1">
+                        <input id="posting-title" type="text" class="form-control" placeholder="Title"
+                               name="<?php echo htmlentities($title); ?>" aria-label="Title"
+                               aria-describedby="basic-addon1">
                     </div>
-                    <button type="submit" class="btn btn-light">Post</button>
-                </form>
-                -->
+                    <button type="submit" id="create-posting-btn" class="btn btn-light">Post</button>
+                </div>
             </div>
         </div>
     </div>

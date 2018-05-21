@@ -28,14 +28,16 @@ class Controller
     const ACTION_LOGIN = 'login';
     const ACTION_LOGOUT = 'logout';
     const ACTION_NEW_USER = 'new-user';
+    const ACTION_NEW_POSTING = 'new-posting';
     const USER_NAME = 'userName';
     const USER_PASSWORD = 'password';
     const USER_LOGIN_FEEDBACK = 'user-login-feedback';
     const USER_INVALID_CREDENTIALS = 'invalid-credentials';
     const USER_LOGIN_SUCCESS = 'login-success';
     const USER_ALREADY_EXISTS = 'already-exists';
-    const POSTING_TITLE = 'title';
-    const POSTING_TEXT = 'text';
+    const POSTING_TITLE = 'posting-title';
+    const POSTING_TEXT = 'posting-text';
+    const POSTING_CHANNELID = 'posting-channelId';
 
     private static $instance = false;
 
@@ -108,6 +110,16 @@ class Controller
                 }
 
                 break;
+
+            case self::ACTION_NEW_POSTING:
+                $user = AuthenticationManager::getAuthenticatedUser();
+
+                $posting = DataManager::createPosting($_REQUEST[self::POSTING_CHANNELID], $_REQUEST[self::POSTING_TITLE], $_REQUEST[self::POSTING_TEXT], $user);
+                if ($posting != null) {
+                    Util::redirect();
+                } else {
+                    throw new \Exception("Posting could not have been created, and I don't know why!");
+                }
 
             default :
                 throw new \Exception('Unknown controller action: ' . $action);

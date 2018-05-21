@@ -206,6 +206,31 @@ class DataManager implements IDataManager
 
         return $postings;
     }
+
+    public static function createPosting(int $channelId, string $title, string $text, User $user): Posting
+    {
+        $postingId = null;
+
+        $con = self::getConnection();
+        $con->beginTransaction();
+        try {
+            self::query($con, "INSERT INTO posting (ChannelId, Title, Text, Author, Date) VALUES (?, ?, ?, ?, ?)",
+                array($channelId, $title, $text, $user->getUserName(), date("Y/m/d")));
+
+            $postingId = self::lastInsertId($con);
+
+            self::query($con, "INSERT INTO userposting (UserId, ChannelId, PostingId, `Read`, Important, Deleted) VALUES (?, ?, ?, ?, ?, ?)",
+                array($user->getId(), $channelId, $postingId, false, false, false));
+            $con->commit();
+
+        } catch (\Exception $e) {
+            $con->rollBack();
+            $postingId = -1;
+        }
+
+        self::closeConnection($con);
+        return $postingId;
+    }
 }
 
 

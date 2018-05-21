@@ -8,6 +8,9 @@
 
 namespace Data;
 
+use Slack\Posting;
+use Slack\User;
+
 interface IDataManager
 {
     public static function getUserById(int $userId);
@@ -19,5 +22,7 @@ interface IDataManager
     public static function getChannels() : array;
 
     public static function getPostingsByChannel(int $channelId) : array;
+
+    public static function createPosting(int $channelId, string $title, string $text, User $user) : Posting;
 
 }

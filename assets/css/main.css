@@ -1,5 +1,12 @@
+html {
+    padding: 0px;
+    margin: 0px;
+    color: rgba(0,0,0,.5);
+}
+
 body {
     width: 100%;
+    color: rgba(0,0,0,.5) !important;
 }
 
 .footer {
@@ -14,4 +21,8 @@ body {
 .channels {
     padding: 20px;
     width: 100%;
+}
+
+.nav-link {
+    color: black;
 }
