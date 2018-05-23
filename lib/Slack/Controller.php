@@ -113,12 +113,11 @@ class Controller
 
             case self::ACTION_NEW_POSTING:
                 $user = AuthenticationManager::getAuthenticatedUser();
-
                 $posting = DataManager::createPosting($_REQUEST[self::POSTING_CHANNELID], $_REQUEST[self::POSTING_TITLE], $_REQUEST[self::POSTING_TEXT], $user);
                 if ($posting != null) {
                     Util::redirect();
                 } else {
-                    throw new \Exception("Posting could not have been created, and I don't know why!");
+                    throw new \Exception("Posting could not have been created!");
                 }
 
             default :

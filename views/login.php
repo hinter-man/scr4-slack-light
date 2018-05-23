@@ -27,12 +27,13 @@ $userName = isset($_REQUEST['userName']) ? $_REQUEST['userName'] : null;
     <form method="post" action="<?php echo Util::action(Slack\Controller::ACTION_LOGIN, array('view' => $view)); ?>">
         <div class="form-group">
             <label for="inputName">Username</label>
-            <input type="text" class="col-sm-4 form-control" id="inputName" name="<?php print Slack\Controller::USER_NAME; ?>"
+            <input type="text" class="col-sm-4 form-control" id="inputName" maxlength="30"
+                   name="<?php print Slack\Controller::USER_NAME; ?>"
                    value="<?php echo htmlentities($userName); ?>" placeholder="Enter username">
         </div>
         <div class="form-group">
             <label for="inputPassword">Password</label>
-            <input type="password" class="col-sm-4 form-control" id="inputPassword"
+            <input type="password" class="col-sm-4 form-control" id="inputPassword" maxlength="40"
                    name="<?php print Slack\Controller::USER_PASSWORD; ?>" placeholder="Enter password">
         </div>
         <button type="submit" class="btn btn-light">Login</button>

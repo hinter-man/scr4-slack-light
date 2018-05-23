@@ -39,11 +39,17 @@ if (isset($channelId) && $channelId > 0) {
                 </div>
             </div>
             <div class="col-sm-8">
-                <?php if (isset($postings) && sizeof($postings) > 0) :
-                    require("partials/postings.php");
-                else : ?>
-                    <div class="alert alert-warning" role="alert">
-                        Please select a channel!
+                <?php if (isset($channelId)) : ?>
+                    <?php if (isset($postings) && sizeof($postings) > 0) :
+                        require("partials/postings.php");
+                    else : ?>
+                        <div class="alert alert-warning" role="alert">
+                            No postings in this channel!
+                        </div>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <div class="alert alert-info" role="alert">
+                        Please select a channel
                     </div>
                 <?php endif; ?>
             </div>
