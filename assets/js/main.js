@@ -1,15 +1,32 @@
-// $(document).ready(() => {
-//     $('#btn-send').click(function() {
-//
+$(document).ready(() => {
+    registerPostingClickListener();
+// .on('click', function () {
+//         let id = event.target.id;
+//         alert(id);
 //         $.ajax({
-//             url: './views/partials/postings.php',
+//             url: './views/important-ajax.php',
 //             type: 'POST',
-//             data: {'action':'new-posting', 'posting-channelId': 1, 'posting-title': 'hallo', 'posting-text': 'texxt'},
+//             data: {'action': 'toggle-important', 'postingId': id},
 //             success: function (data) {
-//                 $('#message-list').append(data);
+//                 alert(data);
 //             }
 //         });
-//
 //     });
-//
-// });
+
+});
+
+function registerPostingClickListener() {
+    $('#message-list .posting').click(function (event) {
+        let id = $(this).attr("id");
+        let userId = $('#actualUserId').text();
+        $.ajax({
+            url: './views/important-ajax.php',
+            type: 'POST',
+            data: {'action': 'toggle-important', 'postingId': id, 'userId': userId},
+            success: function (data) {
+                // either true or false, update list-item
+            }
+        });
+    });
+
+}

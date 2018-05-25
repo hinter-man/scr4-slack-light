@@ -21,7 +21,20 @@ interface IDataManager
 
     public static function getChannels() : array;
 
-    public static function getPostingsByChannel(int $channelId) : array;
+    public static function getPostingsByChannelByUser(int $channelId, int $userId, $markAsRead) : array;
+
+    public static function getAmountOfUnreadPostingsByChannelByUser(int $channelId, int $userId) : int;
+
+    public static function markPostingsAsRead($channelId, $userId);
+
+    /**
+     * Toggle posting important flag
+     *
+     * @param $postingId
+     * @param $userId
+     * @return mixed
+     */
+    public static function togglePostingImportant($postingId, $userId);
 
     public static function createPosting(int $channelId, string $title, string $text, User $user) : int;
 

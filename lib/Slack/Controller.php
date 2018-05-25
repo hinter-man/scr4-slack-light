@@ -29,6 +29,7 @@ class Controller
     const ACTION_LOGOUT = 'logout';
     const ACTION_NEW_USER = 'new-user';
     const ACTION_NEW_POSTING = 'new-posting';
+    const ACTION_TOGGLE_IMPORTANT = 'toggle-important';
     const USER_NAME = 'userName';
     const USER_PASSWORD = 'password';
     const USER_LOGIN_FEEDBACK = 'user-login-feedback';
@@ -38,6 +39,8 @@ class Controller
     const POSTING_TITLE = 'posting-title';
     const POSTING_TEXT = 'posting-text';
     const POSTING_CHANNELID = 'posting-channelId';
+    const POSTING_ID = 'postingId';
+    const USER_ID = 'userId';
 
     private static $instance = false;
 
@@ -96,7 +99,7 @@ class Controller
 
             case self::ACTION_LOGOUT :
                 AuthenticationManager::signOut();
-                Util::redirect();
+                Util::redirect("index.php");
                 break;
 
             case self::ACTION_NEW_USER:

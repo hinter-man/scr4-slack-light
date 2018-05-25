@@ -16,8 +16,10 @@ class Posting extends Entity
     private $text;
     private $author;
     private $date;
+    private $read;
+    private $important;
 
-    public function __construct($id, $channelId, $title, $text, $author, $date)
+    public function __construct($id, $channelId, $title, $text, $author, $date, $read, $important)
     {
         parent::__construct($id);
         $this->channelId = $channelId;
@@ -25,15 +27,11 @@ class Posting extends Entity
         $this->text = $text;
         $this->author = $author;
         $this->date = $date;
+        $this->read = $read;
+        $this->important = $important;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+
 
     /**
      * @return mixed
@@ -73,6 +71,22 @@ class Posting extends Entity
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRead()
+    {
+        return $this->read;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImportant()
+    {
+        return $this->important;
     }
 
 }

@@ -11,6 +11,7 @@ namespace Data;
 use Slack\Channel;
 use Slack\Posting;
 use Slack\User;
+use function Sodium\crypto_generichash_update;
 
 include 'IDataManager.php';
 
@@ -189,38 +190,68 @@ class DataManager implements IDataManager
         return $channels;
     }
 
-    public static function getPostingsByChannel(int $channelId): array
+    public static function getPostingsByChannelByUser(int $channelId, int $userId, $markAsRead = true): array
     {
         $postings = array();
 
         $con = self::getConnection();
+        // fetch users posting, to get specific data like read, important, or deleted
         $res = self::query($con, "
-			SELECT * FROM posting WHERE ChannelId = ?", array($channelId));
+                        SELECT 
+                          p.Id, p.ChannelId, p.Title, p.Text, p.Author, p.Date, up.`Read`, up.Important
+                        FROM 
+                          posting p, userposting up, user u
+                        WHERE 
+                            u.Id = up.UserId AND 
+                            p.Id = up.PostingId AND 
+                            p.ChannelId = ? AND
+                            up.UserId = ? AND 
+                            up.Deleted = ?",
+            array($channelId, $userId, 0));
 
         while ($posting = self::fetchObject($res)) {
-            $postings[] = new Posting($posting->Id, $posting->ChannelId, $posting->Title, $posting->Text, $posting->Author, $posting->Date);
+            $postings[] = new Posting(
+                $posting->Id,
+                $posting->ChannelId,
+                $posting->Title,
+                $posting->Text,
+                $posting->Author,
+                $posting->Date,
+                $posting->Read,
+                $posting->Important);
         }
 
         self::close($res);
         self::closeConnection($con);
 
+        if ($markAsRead) {
+            self::markPostingsAsRead($channelId, $userId);
+        }
+
         return $postings;
     }
 
-    public static function createPosting(int $channelId, string $title, string $text, User $user): int
+    public static function createPosting(int $channelId, string $title, string $text, User $author): int
     {
         $postingId = null;
 
         $con = self::getConnection();
         $con->beginTransaction();
         try {
+            // insert new posting
             self::query($con, "INSERT INTO posting (ChannelId, Title, Text, Author, Date) VALUES (?, ?, ?, ?, ?)",
-                array($channelId, $title, $text, $user->getUserName(), date("Y/m/d")));
+                array($channelId, $title, $text, $author->getUserName(), date("Y/m/d")));
 
             $postingId = self::lastInsertId($con);
 
-            self::query($con, "INSERT INTO userposting (UserId, ChannelId, PostingId, `Read`, Important, Deleted) VALUES (?, ?, ?, ?, ?, ?)",
-                array($user->getId(), $channelId, $postingId, 0, 0, 0));
+            // insert reference for every user
+            $res = self::query($con, "SELECT * FROM user");
+
+            while ($dbUser = self::fetchObject($res)) {
+                self::query($con, "INSERT INTO userposting (UserId, ChannelId, PostingId, `Read`, Important, Deleted) VALUES (?, ?, ?, ?, ?, ?)",
+                    array($dbUser->Id, $channelId, $postingId, 0, 0, 0));
+            }
+
             $con->commit();
 
         } catch (\Exception $e) {
@@ -231,23 +262,64 @@ class DataManager implements IDataManager
         self::closeConnection($con);
         return $postingId;
     }
+
+    public static function getAmountOfUnreadPostingsByChannelByUser(int $channelId, int $userId): int
+    {
+        $postings = self::getPostingsByChannelByUser($channelId, $userId, false);
+        $count = 0;
+
+        foreach ($postings as $posting) {
+            if ($posting->getRead() == false) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    public static function markPostingsAsRead($channelId, $userId)
+    {
+
+        $con = self::getConnection();
+        $con->beginTransaction();
+        try {
+            // update posting
+            self::query($con, "UPDATE userposting SET `Read` = 1 WHERE UserId = ? AND ChannelId = ?",
+                array($userId, $channelId));
+
+            $con->commit();
+
+        } catch (\Exception $e) {
+            var_dump($e);
+            $con->rollBack();
+        }
+
+        self::closeConnection($con);
+    }
+
+    /**
+     * Toggle posting important flag
+     *
+     * @param $postingId
+     * @param $userId
+     * @return mixed
+     */
+    public static function togglePostingImportant($postingId, $userId)
+    {
+        $con = self::getConnection();
+        $con->beginTransaction();
+        try {
+            // update posting
+            self::query($con, "UPDATE userposting SET Important = 1 WHERE UserId = ? AND PostingId = ?",
+                array($userId, $postingId));
+
+            $con->commit();
+
+        } catch (\Exception $e) {
+            var_dump($e);
+            $con->rollBack();
+        }
+
+        self::closeConnection($con);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
