@@ -207,7 +207,7 @@ class DataManager implements IDataManager
         return $postings;
     }
 
-    public static function createPosting(int $channelId, string $title, string $text, User $user): Posting
+    public static function createPosting(int $channelId, string $title, string $text, User $user): int
     {
         $postingId = null;
 
@@ -220,7 +220,7 @@ class DataManager implements IDataManager
             $postingId = self::lastInsertId($con);
 
             self::query($con, "INSERT INTO userposting (UserId, ChannelId, PostingId, `Read`, Important, Deleted) VALUES (?, ?, ?, ?, ?, ?)",
-                array($user->getId(), $channelId, $postingId, false, false, false));
+                array($user->getId(), $channelId, $postingId, 0, 0, 0));
             $con->commit();
 
         } catch (\Exception $e) {

@@ -23,6 +23,6 @@ interface IDataManager
 
     public static function getPostingsByChannel(int $channelId) : array;
 
-    public static function createPosting(int $channelId, string $title, string $text, User $user) : Posting;
+    public static function createPosting(int $channelId, string $title, string $text, User $user) : int;
 
 }
