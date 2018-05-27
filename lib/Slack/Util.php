@@ -50,4 +50,9 @@ class Util extends BaseObject
         exit();
     }
 
+    public static function getImportantStyleClass(bool $important): string
+    {
+        return $important ? "important" : "";
+    }
+
 }

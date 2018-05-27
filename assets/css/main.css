@@ -31,3 +31,17 @@ body {
     max-height: 60vh;
     overflow-y: scroll;
 }
+
+.important-btn{
+    background-image: url("../img/not_important_star.png");
+    background-position: center;
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+    border: none;
+}
+
+.important-btn.important {
+    background-image: url("../img/important_star.png");
+}
+

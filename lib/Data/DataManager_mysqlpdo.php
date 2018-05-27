@@ -306,11 +306,20 @@ class DataManager implements IDataManager
     public static function togglePostingImportant($postingId, $userId)
     {
         $con = self::getConnection();
+
+        $res = self::query($con, "SELECT * FROM userposting WHERE UserId = ? AND PostingId = ?",
+            array($userId, $postingId));
+
+        if ($p = self::fetchObject($res)) {
+            $newImportant = 1 - $p->Important;
+        }
+        self::close($res);
+
         $con->beginTransaction();
         try {
             // update posting
-            self::query($con, "UPDATE userposting SET Important = 1 WHERE UserId = ? AND PostingId = ?",
-                array($userId, $postingId));
+            self::query($con, "UPDATE userposting SET Important = ? WHERE UserId = ? AND PostingId = ?",
+                array($newImportant, $userId, $postingId));
 
             $con->commit();
 
@@ -320,6 +329,8 @@ class DataManager implements IDataManager
         }
 
         self::closeConnection($con);
+
+        return $newImportant;
     }
 }
 

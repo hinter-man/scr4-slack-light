@@ -11,14 +11,21 @@ $user = \Slack\AuthenticationManager::getAuthenticatedUser();
 ?>
 <div id="message-list" class="list-group">
     <?php foreach ($postings as $posting) : ?>
-        <div id="<?php echo $posting->getId(); ?>" class="posting list-group-item list-group-item-action flex-column align-items-start">
+        <div id="<?php echo $posting->getId(); ?>"
+             class="posting list-group-item list-group-item-action flex-column align-items-start">
             <div id="actualUserId" hidden><?php echo $user->getId(); ?></div>
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1"><?php echo $posting->getTitle(); ?></h5>
                 <small><?php echo $posting->getDate(); ?></small>
             </div>
             <p class="mb-1"><?php echo $posting->getText(); ?></p>
-            <small><?php echo $posting->getAuthor(); ?></small>
+            <div class="d-flex w-100 justify-content-between">
+                <small><?php echo $posting->getAuthor(); ?></small>
+                <button id="important-btn-<?php echo $posting->getId(); ?>"
+                        type="submit" class="important-btn
+                            <?php echo \Slack\Util::getImportantStyleClass($posting->getImportant()); ?>"/>
+                <but
+            </div>
         </div>
     <?php endforeach; ?>
     <div class="list-group">
