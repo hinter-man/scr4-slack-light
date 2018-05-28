@@ -60,3 +60,7 @@ body {
     background-image: url("../img/delete.png");
 }
 
+.hide-posting-buttons {
+    visibility: hidden;
+}
+

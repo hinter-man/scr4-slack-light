@@ -1,6 +1,9 @@
 $(document).ready(() => {
     registerImportantBtnClickListener();
     handleEditModal();
+
+   $('#message-list .posting:not(:last)').find('#update-posting-buttons').addClass('hide-posting-buttons');
+
 });
 
 function registerImportantBtnClickListener() {
@@ -21,7 +24,7 @@ function registerImportantBtnClickListener() {
 }
 
 function handleEditModal() {
-    $('#exampleModal').on('show.bs.modal', function (event) {
+    $('#edit-posting-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var title = button.data('title');
         var text = button.data('text');

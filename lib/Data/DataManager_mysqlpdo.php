@@ -206,7 +206,8 @@ class DataManager implements IDataManager
                             p.Id = up.PostingId AND 
                             p.ChannelId = ? AND
                             up.UserId = ? AND 
-                            up.Deleted = ?",
+                            up.Deleted = ?
+                        ORDER BY up.Important DESC, up.PostingId",
             array($channelId, $userId, 0));
 
         while ($posting = self::fetchObject($res)) {
@@ -341,9 +342,8 @@ class DataManager implements IDataManager
             self::query($con,
                 "UPDATE userposting SET Deleted = 1
                         WHERE 
-                          UserId = ? AND
                           PostingId = ?",
-                array($user->getId(), $postingId));
+                array($postingId));
 
             $deletedPostingId = self::lastInsertId($con);
             $con->commit();

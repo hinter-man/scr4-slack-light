@@ -55,4 +55,8 @@ class Util extends BaseObject
         return $important ? "important" : "";
     }
 
+    public static function hidePostingButtons(User $user, Posting $posting) : bool {
+        return $user->getUserName() !== $posting->getAuthor();
+    }
+
 }
