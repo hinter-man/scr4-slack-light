@@ -30,6 +30,8 @@ class Controller
     const ACTION_NEW_USER = 'new-user';
     const ACTION_NEW_POSTING = 'new-posting';
     const ACTION_TOGGLE_IMPORTANT = 'toggle-important';
+    const ACTION_DELETE_POSTING = 'delete-posting';
+    const ACTION_EDIT_POSTING = 'edit-posting';
     const USER_NAME = 'userName';
     const USER_PASSWORD = 'password';
     const USER_LOGIN_FEEDBACK = 'user-login-feedback';
@@ -124,8 +126,31 @@ class Controller
                 }
                 break;
 
+            case self::ACTION_DELETE_POSTING:
+                $user = AuthenticationManager::getAuthenticatedUser();
+                $deletedPostingId = DataManager::deletePosting($_REQUEST[self::POSTING_ID], $user);
+                if ($deletedPostingId < 0) {
+                    throw new \Exception("Posting deletion error.");
+                }
+                Util::redirect();
+                break;
+
             default :
                 throw new \Exception('Unknown controller action: ' . $action);
+                break;
+
+            case self::ACTION_EDIT_POSTING:
+                $user = AuthenticationManager::getAuthenticatedUser();
+                $editedPostingId = DataManager::editPosting(
+                    $_REQUEST[self::POSTING_ID],
+                    $_REQUEST[self::POSTING_TITLE],
+                    $_REQUEST[self::POSTING_TEXT],
+                    $user
+                );
+                if ($editedPostingId < 0) {
+                    throw new \Exception("Posting edit error.");
+                }
+                Util::redirect();
                 break;
         }
     }

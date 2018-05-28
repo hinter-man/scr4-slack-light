@@ -18,13 +18,30 @@ $user = \Slack\AuthenticationManager::getAuthenticatedUser();
                 <h5 class="mb-1"><?php echo $posting->getTitle(); ?></h5>
                 <small><?php echo $posting->getDate(); ?></small>
             </div>
-            <p class="mb-1"><?php echo $posting->getText(); ?></p>
-            <div class="d-flex w-100 justify-content-between">
-                <small><?php echo $posting->getAuthor(); ?></small>
-                <button id="important-btn-<?php echo $posting->getId(); ?>"
-                        type="submit" class="important-btn
-                            <?php echo \Slack\Util::getImportantStyleClass($posting->getImportant()); ?>"/>
-                <but
+            <div class="row">
+                <div class="col-sm-9">
+                    <p class="mb-1"><?php echo $posting->getText(); ?></p>
+                    <div class="d-flex w-100 justify-content-between">
+                        <small><?php echo $posting->getAuthor(); ?></small>
+                    </div>
+                </div>
+                <div align="right" class="col-sm-3">
+                    <form method="post" class="content-inline"
+                          onsubmit="return confirm('Are you sure you want to delete this posting?');"
+                          action="<?php echo \Slack\Util::action(\Slack\Controller::ACTION_DELETE_POSTING); ?>">
+                        <button class="posting-buttons delete-posting-btn"
+                                name="<?php echo \Slack\Controller::POSTING_ID; ?>"
+                                value="<?php echo $posting->getId(); ?>"></button>
+                    </form>
+                    <button id="edit-posting-btn-<?php echo $posting->getId(); ?>"
+                            class="posting-buttons edit-posting-btn" data-toggle="modal" data-target="#exampleModal"
+                            data-posting-id="<?php echo $posting->getID(); ?>"
+                            data-title="<?php echo $posting->getTitle(); ?>"
+                            data-text="<?php echo $posting->getText(); ?>"></button>
+                    <button id="important-btn-<?php echo $posting->getId(); ?>"
+                            type="submit" class="posting-buttons important-btn
+                            <?php echo \Slack\Util::getImportantStyleClass($posting->getImportant()); ?>"></button>
+                </div>
             </div>
         </div>
     <?php endforeach; ?>
@@ -45,11 +62,11 @@ $user = \Slack\AuthenticationManager::getAuthenticatedUser();
                               maxlength="250"></textarea>
                     </div>
                     <input type="text" name="<?php print \Slack\Controller::POSTING_CHANNELID; ?>"
-                           value="<?php print $channelId; ?>" hidden>
+                           value="<?php print $channelId ?>" hidden>
                     <button type="submit" class="btn btn-block">Send</button>
                 </div>
             </form>
         </div>
-
+        <?php require("edit-modal.php"); ?>
     </div>
 </div>

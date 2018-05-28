@@ -38,4 +38,8 @@ interface IDataManager
 
     public static function createPosting(int $channelId, string $title, string $text, User $user) : int;
 
+    public static function deletePosting(int $postingId, User $user): int;
+
+    public static function editPosting(int $postingId, string $title, string $text, User $user) : int;
+
 }

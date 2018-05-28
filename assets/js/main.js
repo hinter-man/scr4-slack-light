@@ -1,6 +1,6 @@
 $(document).ready(() => {
     registerImportantBtnClickListener();
-
+    handleEditModal();
 });
 
 function registerImportantBtnClickListener() {
@@ -18,5 +18,17 @@ function registerImportantBtnClickListener() {
             }
         });
     });
+}
 
+function handleEditModal() {
+    $('#exampleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var title = button.data('title');
+        var text = button.data('text');
+        var id = button.data('posting-id');
+        var modal = $(this)
+        modal.find('#title').val(title);
+        modal.find('#text').val(text);
+        modal.find('#save-edit-btn').attr('value', id);
+    })
 }

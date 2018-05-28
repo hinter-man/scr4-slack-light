@@ -1,12 +1,12 @@
 html {
     padding: 0px;
     margin: 0px;
-    color: rgba(0,0,0,.5);
+    color: rgba(0, 0, 0, .5);
 }
 
 body {
     width: 100%;
-    color: rgba(0,0,0,.5) !important;
+    color: rgba(0, 0, 0, .5) !important;
 }
 
 .footer {
@@ -32,8 +32,7 @@ body {
     overflow-y: scroll;
 }
 
-.important-btn{
-    background-image: url("../img/not_important_star.png");
+.posting-buttons {
     background-position: center;
     width: 24px;
     height: 24px;
@@ -41,7 +40,23 @@ body {
     border: none;
 }
 
+.important-btn {
+    background-image: url("../img/not_important_star.png");
+}
+
 .important-btn.important {
     background-image: url("../img/important_star.png");
+}
+
+.content-inline {
+    display: inline;
+}
+
+.edit-posting-btn {
+    background-image: url("../img/edit.png");
+}
+
+.delete-posting-btn {
+    background-image: url("../img/delete.png");
 }
 

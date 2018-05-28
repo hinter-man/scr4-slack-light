@@ -34,7 +34,7 @@ if (isset($channelId) && $channelId > 0) {
                     <?php
                     foreach ($channels as $channel) : $id = $channel->getId();
                         $unread = DataManager::getAmountOfUnreadPostingsByChannelByUser($id, $user->getId()); ?>
-                        <a class="nav-link" id="<?php echo "channel-tab" . $id ?>"
+                        <a class="nav-link <?php echo $channelId == $id ? "active" : ""; ?>" id="<?php echo "channel-tab" . $id ?>"
                            href="<?php echo $_SERVER['PHP_SELF'] ?>?view=channels&channelId=<?php echo urlencode($id); ?>"
                            role="tab">
                             <?php echo "#" . $channel->getName() . " - " . $channel->getDescription();

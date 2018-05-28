@@ -332,5 +332,50 @@ class DataManager implements IDataManager
 
         return $newImportant;
     }
+
+    public static function deletePosting(int $postingId, User $user): int
+    {
+        $con = self::getConnection();
+        $con->beginTransaction();
+        try {
+            self::query($con,
+                "UPDATE userposting SET Deleted = 1
+                        WHERE 
+                          UserId = ? AND
+                          PostingId = ?",
+                array($user->getId(), $postingId));
+
+            $deletedPostingId = self::lastInsertId($con);
+            $con->commit();
+
+        } catch (\Exception $e) {
+            $con->rollBack();
+            $deletedPostingId = -1;
+        }
+
+        self::closeConnection($con);
+        return $deletedPostingId;
+    }
+
+    public static function editPosting(int $postingId, string $title, string $text, User $user): int
+    {
+        $con = self::getConnection();
+        $con->beginTransaction();
+        try {
+            self::query($con,
+                "UPDATE posting SET Text = ?, Title = ? WHERE Id = ?",
+                array($text, $title, $postingId));
+
+            $editedPostingId = self::lastInsertId($con);
+            $con->commit();
+
+        } catch (\Exception $e) {
+            $con->rollBack();
+            $editedPostingId = -1;
+        }
+
+        self::closeConnection($con);
+        return $editedPostingId;
+    }
 }
 
