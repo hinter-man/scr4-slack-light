@@ -13,10 +13,12 @@ use Slack\AuthenticationManager;
 use Data\DataManager;
 use Slack\Controller;
 
-$channels = DataManager::getChannels();
-
 if (!isset($user)) {
     $user = AuthenticationManager::getAuthenticatedUser();
+}
+
+if (isset($user)) {
+    $channels = DataManager::getUserChannels($user->getId());
 }
 
 $channelId = $_REQUEST['channelId'] ?? null;

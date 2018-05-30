@@ -42,8 +42,8 @@ class AuthenticationManager extends BaseObject
         return self::isAuthenticated() ? DataManager::getUserById($_SESSION['user']) : null;
     }
 
-    public static function createNewUser(string $userName, string $password) {
-        $userId = DataManager::createUser($userName, $password);
+    public static function createNewUser(string $userName, string $password, $channels) {
+        $userId = DataManager::createUser($userName, $password, $channels);
         if ($userId != null && $userId > 0) {
             return DataManager::getUserById($userId);
         }

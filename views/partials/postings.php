@@ -50,29 +50,30 @@ $user = \Slack\AuthenticationManager::getAuthenticatedUser();
                 </div>
             </div>
         <?php endforeach; ?>
-        <div class="list-group">
-            <div class="list-group-item flex-column align-items-start">
-                <form method="post"
-                      action="<?php echo \Slack\Util::action(\Slack\Controller::ACTION_NEW_POSTING); ?>">
-                    <div class="form-group">
-                        <div class="d-flex w-100 justify-content-between">
-                            <input name="<?php print \Slack\Controller::POSTING_TITLE; ?>" type="text"
-                                   class="form-control"
-                                   placeholder="Title" maxlength="50" aria-label="Title"
-                                   aria-describedby="new-posting-title">
-                        </div>
-                        <div class="d-flex w-100 justify-content-between">
+    </div>
+    <div class="list-group">
+        <div class="list-group-item flex-column align-items-start">
+            <form method="post"
+                  action="<?php echo \Slack\Util::action(\Slack\Controller::ACTION_NEW_POSTING); ?>">
+                <div class="form-group">
+                    <div class="d-flex w-100 justify-content-between">
+                        <input name="<?php print \Slack\Controller::POSTING_TITLE; ?>" type="text"
+                               class="form-control"
+                               placeholder="Title" maxlength="50" aria-label="Title"
+                               aria-describedby="new-posting-title" required>
+                    </div>
+                    <div class="d-flex w-100 justify-content-between">
                     <textarea class="form-control" name="<?php print \Slack\Controller::POSTING_TEXT; ?>"
                               aria-label="Message" placeholder="Message"
-                              maxlength="250"></textarea>
-                        </div>
-                        <input type="text" name="<?php print \Slack\Controller::POSTING_CHANNELID; ?>"
-                               value="<?php print $channelId ?>" hidden>
-                        <button type="submit" class="btn btn-block">Send</button>
+                              maxlength="250" required></textarea>
                     </div>
-                </form>
-            </div>
-
+                    <input type="text" name="<?php print \Slack\Controller::POSTING_CHANNELID; ?>"
+                           value="<?php print $channelId ?>" hidden>
+                    <button type="submit" class="btn btn-block">Send</button>
+                </div>
+            </form>
         </div>
+
     </div>
+
 <?php require("edit-modal.php"); ?>

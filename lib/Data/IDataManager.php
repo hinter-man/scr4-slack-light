@@ -17,9 +17,11 @@ interface IDataManager
 
     public static function getUserByUserName(string $userName);
 
-    public static function createUser(string $userName, string $password) : int;
+    public static function createUser(string $userName, string $password, array $channels) : int;
 
     public static function getChannels() : array;
+
+    public static function getUserChannels(int $userId) : array;
 
     public static function getPostingsByChannelByUser(int $channelId, int $userId, $markAsRead) : array;
 

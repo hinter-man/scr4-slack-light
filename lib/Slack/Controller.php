@@ -41,6 +41,7 @@ class Controller
     const POSTING_TITLE = 'posting-title';
     const POSTING_TEXT = 'posting-text';
     const POSTING_CHANNELID = 'posting-channelId';
+    const CHANNELS = 'channels';
     const POSTING_ID = 'postingId';
     const USER_ID = 'userId';
 
@@ -105,7 +106,11 @@ class Controller
                 break;
 
             case self::ACTION_NEW_USER:
-                $user = AuthenticationManager::createNewUser($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD]);
+                if (!isset($_REQUEST[self::USER_NAME]) || !isset($_REQUEST[self::USER_PASSWORD]) || !isset($_REQUEST[self::CHANNELS])) {
+                    throw new \Exception("Not all fields are filled correctly.");
+                }
+
+                $user = AuthenticationManager::createNewUser($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD], $_REQUEST[self::CHANNELS]);
                 if ($user != null) {
                     $_SESSION[self::USER_LOGIN_FEEDBACK] = self::USER_LOGIN_SUCCESS;
                     Util::redirect("index.php?view=login");

@@ -8,6 +8,7 @@
 
 namespace Data;
 
+use Slack\AuthenticationManager;
 use Slack\Channel;
 use Slack\Posting;
 use Slack\User;
@@ -141,7 +142,7 @@ class DataManager implements IDataManager
         return $user;
     }
 
-    public static function createUser(string $userName, string $password): int
+    public static function createUser(string $userName, string $password, array $channels): int
     {
         $userId = null;
 
@@ -161,6 +162,14 @@ class DataManager implements IDataManager
                     $password));
 
             $userId = self::lastInsertId($con);
+
+            foreach ($channels as $channel) {
+                self::query($con,
+                    "INSERT INTO userchannel (ChannelId, UserId) 
+                      VALUES (?, ?)",
+                    array($channel,
+                        $userId));
+            }
             $con->commit();
 
         } catch (\Exception $e) {
@@ -179,6 +188,31 @@ class DataManager implements IDataManager
         $con = self::getConnection();
         $res = self::query($con, "
 			SELECT * FROM channel");
+
+        while ($channel = self::fetchObject($res)) {
+            $channels[] = new Channel($channel->Id, $channel->Name, $channel->Description);
+        }
+
+        self::close($res);
+        self::closeConnection($con);
+
+        return $channels;
+    }
+
+    public static function getUserChannels(int $userId): array
+    {
+        $channels = array();
+
+        $con = self::getConnection();
+        $res = self::query($con,
+            "SELECT
+	                c.Id, c.Name, c.Description
+                  FROM
+                    channel c, userchannel uc
+                  WHERE
+                    c.Id = uc.ChannelId AND
+                    uc.UserId = ?",
+            array($userId));
 
         while ($channel = self::fetchObject($res)) {
             $channels[] = new Channel($channel->Id, $channel->Name, $channel->Description);
@@ -241,7 +275,7 @@ class DataManager implements IDataManager
         try {
             // insert new posting
             self::query($con, "INSERT INTO posting (ChannelId, Title, Text, Author, Date) VALUES (?, ?, ?, ?, ?)",
-                array($channelId, $title, $text, $author->getUserName(), date("Y/m/d")));
+                array($channelId, $title, $text, $author->getUserName(), date("Y-m-d H:i:s")));
 
             $postingId = self::lastInsertId($con);
 
@@ -336,6 +370,10 @@ class DataManager implements IDataManager
 
     public static function deletePosting(int $postingId, User $user): int
     {
+        if (!self::isPostingOwner($user, $postingId)) {
+            return -1;
+        }
+
         $con = self::getConnection();
         $con->beginTransaction();
         try {
@@ -359,6 +397,10 @@ class DataManager implements IDataManager
 
     public static function editPosting(int $postingId, string $title, string $text, User $user): int
     {
+        if (!self::isPostingOwner($user, $postingId)) {
+            return -1;
+        }
+
         $con = self::getConnection();
         $con->beginTransaction();
         try {
@@ -376,6 +418,16 @@ class DataManager implements IDataManager
 
         self::closeConnection($con);
         return $editedPostingId;
+    }
+
+    private static function isPostingOwner(User $user, int $postingId): bool
+    {
+        $con = self::getConnection();
+        $res = self::query($con, "SELECT * FROM posting WHERE Author = ? AND Id = ?",
+            array($user->getUserName(), $postingId));
+
+        // fetchObject returns either an object or false
+        return self::fetchObject($res) != false;
     }
 }
 
