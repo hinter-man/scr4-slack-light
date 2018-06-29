@@ -8,6 +8,8 @@
 
 namespace Slack;
 
+use Slack\Controller;
+
 class Util extends BaseObject
 {
 
@@ -46,6 +48,15 @@ class Util extends BaseObject
         }
         header("Location: $page");
         exit();
+    }
+
+    public static function getImportantStyleClass(bool $important): string
+    {
+        return $important ? "important" : "";
+    }
+
+    public static function hidePostingButtons(User $user, Posting $posting) : bool {
+        return $user->getUserName() !== $posting->getAuthor();
     }
 
 }

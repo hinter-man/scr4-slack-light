@@ -1,0 +1,65 @@
+html {
+    padding: 0px;
+    margin: 0px;
+    color: rgba(0, 0, 0, .5);
+}
+
+body {
+    width: 100%;
+    color: rgba(0, 0, 0, .5) !important;
+}
+
+.footer {
+    margin-top: 30px;
+}
+
+.add-remove input {
+    width: 30px;
+    text-align: center;
+}
+
+.channels {
+    padding: 20px;
+    width: 100%;
+}
+
+.nav-link {
+    color: black;
+}
+
+#message-list {
+    max-height: 60vh;
+    overflow-y: scroll;
+}
+
+.posting-buttons {
+    background-position: center;
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+    border: none;
+}
+
+.important-btn {
+    background-image: url("../img/not_important_star.png");
+}
+
+.important-btn.important {
+    background-image: url("../img/important_star.png");
+}
+
+.content-inline {
+    display: inline;
+}
+
+.edit-posting-btn {
+    background-image: url("../img/edit.png");
+}
+
+.delete-posting-btn {
+    background-image: url("../img/delete.png");
+}
+
+.hide-posting-buttons {
+    visibility: hidden;
+}

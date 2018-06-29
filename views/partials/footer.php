@@ -8,35 +8,24 @@
 
 use Slack\Util;
 
-if (isset($errors) && is_array($errors)): ?>
-    <div class="errors alert alert-danger">
-        <ul>
-            <?php foreach ($errors as $errMsg): ?>
-                <li><?php echo(Util::escape($errMsg)); ?></li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-<?php endif; ?>
-
-<!--/display error messages-->
+?>
 
 <div class="footer">
 
-    <!--display cart info-->
     <hr/>
     <div class="col-sm-4 pull-right">
         <p><?php echo Slack\Util::escape(strftime('%c')); ?></p>
     </div>
 
 
-    <!--/display cart info-->
-
 </div>
 
 </div> <!-- container -->
 
-<script src="assets/jquery-1.11.2.min.js"></script>
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="assets/js/main.js"></script>
 
 </body>
 </html>

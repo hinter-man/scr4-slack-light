@@ -28,8 +28,22 @@ class Controller
     const ACTION_LOGIN = 'login';
     const ACTION_LOGOUT = 'logout';
     const ACTION_NEW_USER = 'new-user';
+    const ACTION_NEW_POSTING = 'new-posting';
+    const ACTION_TOGGLE_IMPORTANT = 'toggle-important';
+    const ACTION_DELETE_POSTING = 'delete-posting';
+    const ACTION_EDIT_POSTING = 'edit-posting';
     const USER_NAME = 'userName';
     const USER_PASSWORD = 'password';
+    const USER_LOGIN_FEEDBACK = 'user-login-feedback';
+    const USER_INVALID_CREDENTIALS = 'invalid-credentials';
+    const USER_LOGIN_SUCCESS = 'login-success';
+    const USER_ALREADY_EXISTS = 'already-exists';
+    const POSTING_TITLE = 'posting-title';
+    const POSTING_TEXT = 'posting-text';
+    const POSTING_CHANNELID = 'posting-channelId';
+    const CHANNELS = 'channels';
+    const POSTING_ID = 'postingId';
+    const USER_ID = 'userId';
 
     private static $instance = false;
 
@@ -58,7 +72,7 @@ class Controller
      * action
      *
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function invokePostAction(): bool
     {
@@ -80,48 +94,74 @@ class Controller
         switch ($action) {
             case self::ACTION_LOGIN :
                 if (!AuthenticationManager::authenticate($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD])) {
-                    self::forwardRequest(['Invalid user credentials.']);
+                    $_SESSION[self::USER_LOGIN_FEEDBACK] = self::USER_INVALID_CREDENTIALS;
+                    Util::redirect();
                 }
                 Util::redirect();
                 break;
 
             case self::ACTION_LOGOUT :
                 AuthenticationManager::signOut();
-                Util::redirect();
+                Util::redirect("index.php");
                 break;
 
             case self::ACTION_NEW_USER:
-                $user = AuthenticationManager::createNewUser($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD]);
-                if ($user != null) {
-                    $_SESSION['success-user'] = true;
-                    Util::redirect("index.php?view=login");
-                } else {
-                    $_SESSION['success-user'] = false;
-                    Util::redirect("index.php?view=new-user");
+                if (!isset($_REQUEST[self::USER_NAME]) || !isset($_REQUEST[self::USER_PASSWORD]) || !isset($_REQUEST[self::CHANNELS])) {
+                    throw new \Exception("Not all fields are filled correctly.");
                 }
 
+                $user = AuthenticationManager::createNewUser($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD], $_REQUEST[self::CHANNELS]);
+                if ($user != null) {
+                    $_SESSION[self::USER_LOGIN_FEEDBACK] = self::USER_LOGIN_SUCCESS;
+                    Util::redirect("index.php?view=login");
+                } else {
+                    $_SESSION[self::USER_LOGIN_FEEDBACK] = self::USER_ALREADY_EXISTS;
+                    Util::redirect();
+                }
+
+                break;
+
+            case self::ACTION_NEW_POSTING:
+                $user = AuthenticationManager::getAuthenticatedUser();
+                $posting = DataManager::createPosting($_REQUEST[self::POSTING_CHANNELID], $_REQUEST[self::POSTING_TITLE], $_REQUEST[self::POSTING_TEXT], $user);
+                if ($posting == null) {
+                    throw new \Exception("Posting could not have been created!");
+                } else {
+                    Util::redirect();
+                }
+                break;
+
+            case self::ACTION_DELETE_POSTING:
+                $user = AuthenticationManager::getAuthenticatedUser();
+                if ($user == null) {
+                    return false;
+                }
+                $deletedPostingId = DataManager::deletePosting($_REQUEST[self::POSTING_ID], $user);
+                if ($deletedPostingId < 0) {
+                    throw new \Exception("Posting deletion error.");
+                }
+                Util::redirect();
                 break;
 
             default :
                 throw new \Exception('Unknown controller action: ' . $action);
                 break;
+
+            case self::ACTION_EDIT_POSTING:
+                $user = AuthenticationManager::getAuthenticatedUser();
+                $editedPostingId = DataManager::editPosting(
+                    $_REQUEST[self::POSTING_ID],
+                    $_REQUEST[self::POSTING_TITLE],
+                    $_REQUEST[self::POSTING_TEXT],
+                    $user
+                );
+                if ($editedPostingId < 0) {
+                    throw new \Exception("Posting edit error.");
+                }
+                Util::redirect();
+                break;
         }
     }
 
-    protected function forwardRequest(array $errors = null, $target = null)
-    {
-        if ($target == null) {
-            if (isset($_REQUEST[self::PAGE])) {
-                $target = $_REQUEST[self::PAGE];
-            } else {
-                $target = $_SERVER['REQUEST_URI'];
-            }
-        }
-        if (count($errors) > 0) {
-            $target .= '&errors=' . urlencode(serialize($errors));
-            header('Location:' . $target);
-            exit();
-        }
-    }
 
 }
