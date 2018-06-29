@@ -133,6 +133,9 @@ class Controller
 
             case self::ACTION_DELETE_POSTING:
                 $user = AuthenticationManager::getAuthenticatedUser();
+                if ($user == null) {
+                    return false;
+                }
                 $deletedPostingId = DataManager::deletePosting($_REQUEST[self::POSTING_ID], $user);
                 if ($deletedPostingId < 0) {
                     throw new \Exception("Posting deletion error.");
